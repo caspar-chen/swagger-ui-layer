@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title id="title">swagger-ui-layer</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" type="text/css"
+	href="webjars/layui/css/layui.css">
+<link rel="stylesheet" type="text/css" href="webjars/css/global.css">
+<link rel="stylesheet" type="text/css" href="webjars/css/jquery.json-viewer.css">
+</head>
+<body>
+<script id="template" type="text/template">
+	<div class="layui-layout layui-layout-admin"
+		style="border-bottom: solid 3px #1aa094;">
+		<div class="layui-header header "> 
+			<div class="layui-main">
+				<div class="admin-login-box logo">
+				        <span>{{:info.title}}<small class="version">{{:info.version}}</small></span>
+				</div>
+			</div>
+		</div>
+		<div class="layui-side layui-bg-black" id="admin-side">
+			<div class="layui-side-scroll" id="admin-navbar-side"
+				lay-filter="side">
+				<ul class="layui-nav layui-nav-tree beg-navbar">
+                    {{for tags itemVar="~tag"}}
+                        {{if name != "basic-error-controller"}}
+                        <li class="layui-nav-item"><a href="javascript:;"><i class="fa fa-cogs" aria-hidden="true" data-icon="fa-cogs"></i>
+                            <cite>{{:name}}</cite><span class="layui-nav-more"></span></a>
+                            <dl class="layui-nav-child">
+                                {{!--获取tags下面对应的方法--}}
+                                {{props ~root.paths itemVar="~path"}}
+                                    {{!--具体方法--}}
+                                    {{props prop}}
+                                        {{if prop.tags[0] == ~tag.name}}
+                                            <dd title="{{:~path.key}}">
+                                                <a href="javascript:;" name="a_path" path="{{:~path.key}}" method="{{:key}}" operationId="{{:prop.operationId}}"><i class="fa fa-navicon" data-icon="fa-navicon"></i><cite>{{:prop.summary}}</cite></a>
+                                            </dd>
+                                        {{/if}}
+                                    {{/props}}
+                                {{/props}}
+                            </dl>
+                        </li>
+                        {{/if}}
+                    {{/for}}
+				</ul>
+			</div>
+		</div>
+		<div class="layui-body site-content" id="path-body"
+			style="bottom: 0;border-left: solid 2px #1AA094;">
+            {{!-- body 内容  $ref = temp_body --}}
+		</div>
+		<div class="layui-footer footer">
+            <div class="layui-main">
+            <p><a href="{{:info.license.url}}">{{:info.license.name}}</a></p>
+            </div>
+        </div>
+	</div>
+</script>
+<script id="temp_body" type="text/template">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><span class="method {{:method}}" m_operationId ="{{:operationId}}" path="{{:path}}" method = "{{:method}}">{{:method}}</span>{{:path}}</li>
+            <li>Debug</li>
+        </ul>
+        <div class="layui-tab-content" style="min-height: 150px; padding: 5px 0px 0px; height: 803px;">
+            <div class="layui-tab-item layui-show">
+              <table class="layui-table">
+              <colgroup>
+                <col width="150">
+                <col width="150">
+                <col width="150">
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th>Path</th>
+                  <td colspan="3">{{:path}}</td>
+                </tr>
+                <tr>
+                  <th>Summary</th>
+                  <td colspan="3">{{:summary}}</td>
+                </tr>
+                <tr>
+                  <th>Description</th>
+                  <td colspan="3">{{:description}}</td>
+                </tr>
+                <tr>
+                  <th>Consumes</th>
+                  <td>{{:consumes}}</td>
+                  <th>Produces</th>
+                  <td>{{:produces}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <fieldset class="layui-elem-field layui-field-title" >
+                <legend>Parameters</legend>
+            </fieldset>
+            <table class="layui-table">
+              <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Parameter Type</th>
+                    <th>Data Type</th>
+                    <th>Required</th>
+                </tr> 
+              </thead>
+              <tbody>
+                {{for parameters}}
+                    <tr>
+                        <td>{{:name}}</td>
+                        <td>{{:description}}</td>
+                        <td>{{:in}}</td>
+                        <td>{{:type}}</td>     
+                        {{if required}}
+                            <td><i class="layui-icon">&#xe618;</i></td>
+                        {{else}}
+                            <td></td>
+                        {{/if}}                   
+                    </tr>
+                {{/for}}
+              </tbody>
+            </table>
+            <fieldset class="layui-elem-field layui-field-title" >
+                <legend>Responses</legend>
+            </fieldset>
+            <table class="layui-table">
+              <thead>
+                <tr>
+                    <th>Properties</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr> 
+              </thead>
+              <tbody id="path-body-response-model">
+              </tbody>
+            </table>
+            </div>
+            <div class="layui-tab-item">
+                <fieldset class="layui-elem-field layui-field-title" >
+                <legend>Parameters</legend>
+                </fieldset>
+                <table class="layui-table">
+                  <colgroup>
+                    <col width="150">
+                    <col>
+                    <col>
+                    <col width="150">
+                    <col width="150">
+                   <col>
+                  </colgroup>
+                  <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th>Data Type</th>
+                        <th>Required</th>
+                    </tr> 
+                  </thead>
+                  <tbody>
+                    {{for parameters}}
+                        <tr>
+                            <td>{{:name}}</td>
+                            <td>
+                            {{if required}}
+                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" required="required" placeholder="required" autocomplete="off" class="layui-input">
+                            {{else}}
+                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" autocomplete="off" class="layui-input">
+                            {{/if}}  
+                            </td>
+                            <td>{{:description}}</td>
+                            <td>{{:type}}</td>     
+                            {{if required}}
+                                <td><i class="layui-icon">&#xe618;</i></td>
+                            {{else}}
+                                <td></td>
+                            {{/if}}                   
+                        </tr>
+                    {{/for}}
+                  </tbody>
+                </table>
+                <div>
+                    <button class="layui-btn" name="btn_submit" onclick="getData('{{:operationId}}')"> Submit </button>
+                </div>
+                <fieldset class="layui-elem-field layui-field-title" >
+                    <legend>Responses</legend>
+                </fieldset>
+                <div class="responseJson"><pre id="json-response"></pre>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="temp_body_response_model" type="text/template">
+   {{props properties}}
+    <tr>
+        <td>{{:key}}</td>
+        <td>{{:prop.type}}</td>
+        <td>{{:prop.description}}</td>
+    </tr>
+   {{/props}} 
+</script>
+
+</body>
+<script src="webjars/layui/layui.js"></script>
+<script src="webjars/js/jquery.js"></script>
+<script src="webjars/js/jsrender.min.js"></script>
+<script src="webjars/js/jquery.json-viewer.js"></script>
+<script>
+	$.views.settings.allowCode(true);
+	$.views.converters("getResponseModelName", function(val) {
+	  return getResponseModelName(val);
+	});
+
+    var tempBody = $.templates('#temp_body');
+    var tempBodyResponseModel = $.templates('#temp_body_response_model');
+    
+    $(function(){
+	    $.ajax({
+	        url : "v2/api-docs",
+// 	        url : "http://petstore.swagger.io/v2/swagger.json",
+	        dataType : "json",
+	        type : "get",
+	        async : false,
+	        success : function(data) {
+	            //layui init
+	            layui.use([ 'layer','jquery', 'element' ], function() {
+		            var $ = layui.jquery, layer = layui.layer, element = layui.element;
+		        });
+	            var jsonData = eval(data);
+	            
+	            $("#title").html(jsonData.info.title);
+	            $("body").html($("#template").render(jsonData));
+	            
+	            $("[name='a_path']").click(function(){
+		            var path = $(this).attr("path");
+		            var method = $(this).attr("method");
+		            var operationId = $(this).attr("operationId");
+		            $.each(jsonData.paths[path],function(i,d){
+		              if(d.operationId == operationId){
+                          d.path = path;
+                          d.method = method;
+		                  //console.log(d);
+			              $("#path-body").html(tempBody.render(d));
+                          var modelName = getResponseModelName(d.responses["200"]["schema"]["$ref"]);
+                          if(modelName){
+                            $("#path-body-response-model").html(tempBodyResponseModel.render(jsonData.definitions[modelName]));
+                          }
+		              }
+		            });
+		        });
+		        
+		       $("[name='btn_submit']").click(function(){
+		            console.log(operationId);
+		            var operationId = $(this).attr("operationId");
+		            var parameterJson = {};
+		            $("input[operationId='"+operationId+"']").each(function(index, domEle){
+		                var k = $(domEle).attr("name");
+		                var v = $(domEle).val();
+		                parameterJson.push({k:v});
+		            });
+		            console.log(parameterJson);
+		        });
+		        
+	        }
+	    });
+        
+    });
+    
+	function getResponseModelName(val){
+	  if(!val){
+	    return null;
+	  }
+	  return val.substring(val.lastIndexOf("/")+1,val.length);
+	}
+	
+	function getData(operationId){
+	   var parameter = "";
+       $("[p_operationId='"+operationId+"']").each(function(index, domEle){
+           var k = $(domEle).attr("name");
+           var v = $(domEle).val();
+           if(v){
+	           parameter += k+"="+v+"&";
+           }
+       });
+       parameter = parameter.substring(0,parameter.length-1)
+	   
+       $.ajax({
+		   type: $("[m_operationId='"+operationId+"']").attr("method"),
+		   url: $("[m_operationId='"+operationId+"']").attr("path"),
+		   data: parameter,
+		   success: function(data){
+		     var options = {
+              withQuotes: true
+             };
+		     $("#json-response").jsonViewer(data, options);
+		   }
+	   });
+	}
+	
+</script>
+</html>
