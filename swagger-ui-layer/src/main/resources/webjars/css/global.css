@@ -17,7 +17,11 @@
 .responseJson{padding: 0 0 50px 15px;}
 
 /* body */
+.hide{display: none}
 .site-content {padding: 0 10px 0 10px}
+.bg-grey {background-color: #7d8492;}
+.parameter-text{width:100%;}
+.method-type{ float: right;padding: 0px 0px 5px 0px;}
 .method{
 	text-transform: uppercase;
     text-decoration: none;

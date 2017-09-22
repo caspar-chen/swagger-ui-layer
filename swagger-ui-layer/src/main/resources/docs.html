@@ -144,9 +144,17 @@
             </div>
             <div class="layui-tab-item">
                 <fieldset class="layui-elem-field layui-field-title" >
-                <legend>Parameters</legend>
+                    <legend>Parameters</legend>
                 </fieldset>
-                <table class="layui-table">
+                <div class="method-type">
+                    <lable>Parameter Type:</lable>
+                    <select onchange="changeParameterType('{{:operationId}}')" id="sel_pt_{{:operationId}}">
+                        <option value="form" contentType="application/x-www-form-urlencoded;charset=UTF-8">Form</option> 
+                        <option value="json" contentType="application/json;charset=UTF-8">Json</option>        
+                    </select>
+                </div>
+                <textarea class="parameter-text hide" rows="10" id="text_tp_{{:operationId}}"></textarea>
+                <table class="layui-table"  id="table_tp_{{:operationId}}">
                   <colgroup>
                     <col width="150">
                     <col>
@@ -160,6 +168,7 @@
                         <th>Name</th>
                         <th>Value</th>
                         <th>Description</th>
+                        <th>Parameter Type</th>
                         <th>Data Type</th>
                         <th>Required</th>
                     </tr> 
@@ -170,12 +179,13 @@
                             <td>{{:name}}</td>
                             <td>
                             {{if required}}
-                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" required="required" placeholder="required" autocomplete="off" class="layui-input">
+                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}" required="required" placeholder="required" autocomplete="off" class="layui-input">
                             {{else}}
-                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" autocomplete="off" class="layui-input">
+                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}" autocomplete="off" class="layui-input">
                             {{/if}}  
                             </td>
                             <td>{{:description}}</td>
+                            <td>{{:in}}</td>
                             <td>{{:type}}</td>     
                             {{if required}}
                                 <td><i class="layui-icon">&#xe618;</i></td>
@@ -206,103 +216,10 @@
     </tr>
    {{/props}} 
 </script>
-
 </body>
 <script src="webjars/layui/layui.js"></script>
 <script src="webjars/js/jquery.js"></script>
 <script src="webjars/js/jsrender.min.js"></script>
 <script src="webjars/js/jquery.json-viewer.js"></script>
-<script>
-	$.views.settings.allowCode(true);
-	$.views.converters("getResponseModelName", function(val) {
-	  return getResponseModelName(val);
-	});
-
-    var tempBody = $.templates('#temp_body');
-    var tempBodyResponseModel = $.templates('#temp_body_response_model');
-    
-    $(function(){
-	    $.ajax({
-	        url : "v2/api-docs",
-// 	        url : "http://petstore.swagger.io/v2/swagger.json",
-	        dataType : "json",
-	        type : "get",
-	        async : false,
-	        success : function(data) {
-	            //layui init
-	            layui.use([ 'layer','jquery', 'element' ], function() {
-		            var $ = layui.jquery, layer = layui.layer, element = layui.element;
-		        });
-	            var jsonData = eval(data);
-	            
-	            $("#title").html(jsonData.info.title);
-	            $("body").html($("#template").render(jsonData));
-	            
-	            $("[name='a_path']").click(function(){
-		            var path = $(this).attr("path");
-		            var method = $(this).attr("method");
-		            var operationId = $(this).attr("operationId");
-		            $.each(jsonData.paths[path],function(i,d){
-		              if(d.operationId == operationId){
-                          d.path = path;
-                          d.method = method;
-		                  //console.log(d);
-			              $("#path-body").html(tempBody.render(d));
-                          var modelName = getResponseModelName(d.responses["200"]["schema"]["$ref"]);
-                          if(modelName){
-                            $("#path-body-response-model").html(tempBodyResponseModel.render(jsonData.definitions[modelName]));
-                          }
-		              }
-		            });
-		        });
-		        
-		       $("[name='btn_submit']").click(function(){
-		            console.log(operationId);
-		            var operationId = $(this).attr("operationId");
-		            var parameterJson = {};
-		            $("input[operationId='"+operationId+"']").each(function(index, domEle){
-		                var k = $(domEle).attr("name");
-		                var v = $(domEle).val();
-		                parameterJson.push({k:v});
-		            });
-		            console.log(parameterJson);
-		        });
-		        
-	        }
-	    });
-        
-    });
-    
-	function getResponseModelName(val){
-	  if(!val){
-	    return null;
-	  }
-	  return val.substring(val.lastIndexOf("/")+1,val.length);
-	}
-	
-	function getData(operationId){
-	   var parameter = "";
-       $("[p_operationId='"+operationId+"']").each(function(index, domEle){
-           var k = $(domEle).attr("name");
-           var v = $(domEle).val();
-           if(v){
-	           parameter += k+"="+v+"&";
-           }
-       });
-       parameter = parameter.substring(0,parameter.length-1)
-	   
-       $.ajax({
-		   type: $("[m_operationId='"+operationId+"']").attr("method"),
-		   url: $("[m_operationId='"+operationId+"']").attr("path"),
-		   data: parameter,
-		   success: function(data){
-		     var options = {
-              withQuotes: true
-             };
-		     $("#json-response").jsonViewer(data, options);
-		   }
-	   });
-	}
-	
-</script>
+<script src="webjars/js/docs.js"></script>
 </html>
