@@ -6,6 +6,15 @@ $.views.converters("getResponseModelName", function(val) {
 var tempBody = $.templates('#temp_body');
 var tempBodyResponseModel = $.templates('#temp_body_response_model');
 
+//获取context path
+var contextPath = getContextPath();
+function getContextPath() {
+  var pathName = document.location.pathname;
+  var index = pathName.substr(1).indexOf("/");
+  var result = pathName.substr(0,index+1);
+  return result;
+}
+
 $(function(){
     $.ajax({
         url : "v2/api-docs",
@@ -65,8 +74,7 @@ function getResponseModelName(val){
 
 //测试按钮，获取数据
 function getData(operationId){
-   var path = $("[m_operationId='"+operationId+"']").attr("path");
-   
+   var path = contextPath + $("[m_operationId='"+operationId+"']").attr("path");
    //path 参数
    $("[p_operationId='"+operationId+"'][in='path']").each(function(index, domEle){
        var k = $(domEle).attr("name");
