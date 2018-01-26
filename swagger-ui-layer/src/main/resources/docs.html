@@ -6,28 +6,28 @@
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1">
+    content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="format-detection" content="telephone=no">
 <link rel="stylesheet" type="text/css"
-	href="webjars/layui/css/layui.css">
+    href="webjars/layui/css/layui.css">
 <link rel="stylesheet" type="text/css" href="webjars/css/global.css">
 <link rel="stylesheet" type="text/css" href="webjars/css/jquery.json-viewer.css">
 </head>
 <body>
 <script id="template" type="text/template">
-	<div class="layui-layout layui-layout-admin"
-		style="border-bottom: solid 3px #1aa094;">
-		<div class="layui-header header "> 
-			<div class="layui-main">
-				<div class="admin-login-box logo">
-				        <span>{{:info.title}}<small class="version">{{:info.version}}</small></span>
-				</div>
-			</div>
-		</div>
-		<div class="layui-side layui-bg-black" id="admin-side">
-			<div class="layui-side-scroll" id="admin-navbar-side"
-				lay-filter="side">
-				<ul class="layui-nav layui-nav-tree beg-navbar">
+    <div class="layui-layout layui-layout-admin"
+        style="border-bottom: solid 3px #1aa094;">
+        <div class="layui-header header "> 
+            <div class="layui-main">
+                <div class="admin-login-box logo">
+                        <span>{{:info.title}}<small class="version">{{:info.version}}</small></span>
+                </div>
+            </div>
+        </div>
+        <div class="layui-side layui-bg-black" id="admin-side">
+            <div class="layui-side-scroll" id="admin-navbar-side"
+                lay-filter="side">
+                <ul class="layui-nav layui-nav-tree beg-navbar">
                     {{for tags itemVar="~tag"}}
                         {{if name != "basic-error-controller"}}
                         <li class="layui-nav-item"><a href="javascript:;"><i class="fa fa-cogs" aria-hidden="true" data-icon="fa-cogs"></i>
@@ -39,7 +39,7 @@
                                     {{props prop}}
                                         {{if prop.tags[0] == ~tag.name}}
                                             <dd title="{{:~path.key}}">
-                                                <a href="javascript:;" name="a_path" path="{{:~path.key}}" method="{{:key}}" operationId="{{:prop.operationId}}"><i class="fa fa-navicon" data-icon="fa-navicon"></i><cite>{{:prop.summary}}</cite></a>
+                                                <a href="javascript:;" name="a_path" path="{{:~path.key}}" method="{{:key}}" operationId="{{:prop.operationId}}"><i class="fa fa-navicon" data-icon="fa-navicon"></i><cite class="">{{:~path.key}}</cite><cite class="{{:key}}_font pl10">{{:prop.summary}}</cite></a>
                                             </dd>
                                         {{/if}}
                                     {{/props}}
@@ -49,18 +49,21 @@
                         {{/if}}
                     {{/for}}
 				</ul>
-			</div>
-		</div>
-		<div class="layui-body site-content" id="path-body"
-			style="bottom: 0;border-left: solid 2px #1AA094;">
-            {{!-- body 内容  $ref = temp_body --}}
-		</div>
-		<div class="layui-footer footer">
-            <div class="layui-main">
-            <p><a href="{{:info.license.url}}">{{:info.license.name}}</a></p>
             </div>
         </div>
-	</div>
+        <div class="layui-body site-content" id="path-body"
+            style="border-left: solid 2px #1AA094;">
+            {{!-- body 内容  $ref = temp_body --}}
+        </div>
+        
+        {{if info.license}}
+        <div class="layui-footer footer">
+            <div class="layui-main">
+                <a href="{{:info.license.url}}" target="blank">{{:info.license.name}}</a></p>
+            </div>
+        </div>
+        {{/if}}
+    </div>
 </script>
 <script id="temp_body" type="text/template">
     <div class="layui-tab layui-tab-brief">
@@ -147,11 +150,10 @@
                     <legend>Parameters</legend>
                 </fieldset>
                 <div class="method-type">
-                    <lable>Parameter Type:</lable>
-                    <select onchange="changeParameterType('{{:operationId}}')" id="sel_pt_{{:operationId}}">
-                        <option value="form" contentType="application/x-www-form-urlencoded;charset=UTF-8">Form</option> 
-                        <option value="json" contentType="application/json;charset=UTF-8">Json</option>        
-                    </select>
+                    <lable>Parameter Type : </lable>
+                    <input type="hidden" id="content_type_{{:operationId}}" contentType="application/x-www-form-urlencoded;charset=UTF-8">
+                    <button id="pt_form_{{:operationId}}" type="form" operationId = "{{:operationId}}" onclick="changeParameterType(this)" contentType="application/x-www-form-urlencoded;charset=UTF-8" class="layui-btn layui-btn-small layui-btn-normal layui-btn-radius">Form</button>
+                    <button id="pt_json_{{:operationId}}" type="json" operationId = "{{:operationId}}" onclick="changeParameterType(this)" contentType="application/json;charset=UTF-8" class="layui-btn layui-btn-small layui-btn-primary layui-btn-radius">Json</button>
                 </div>
                 <textarea class="parameter-text hide" rows="10" id="text_tp_{{:operationId}}"></textarea>
                 <table class="layui-table"  id="table_tp_{{:operationId}}">

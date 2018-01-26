@@ -49,7 +49,7 @@ $(function(){
 	            });
 	        });
 	        
-	        
+	       //提交测试按钮
 	       $("[name='btn_submit']").click(function(){
                 var operationId = $(this).attr("operationId");
                 var parameterJson = {};
@@ -84,8 +84,9 @@ function getData(operationId){
        }
    });
    
-   var parameterType = $("#sel_pt_"+operationId).val();
-   var contentType = $("#sel_pt_"+operationId).find("option:selected").attr("contentType");
+   //请求方式
+   var parameterType = $("#content_type_"+operationId).val();
+   var contentType = $("#content_type_"+operationId).attr("contentType");
    
    //query 参数
    var parameterJson = {};
@@ -123,14 +124,21 @@ function getData(operationId){
    });
 }
 
-//更改参数类型
-function changeParameterType(operationId){
-   var v = $("#sel_pt_"+operationId).val();
-   if("form" == v){
-        $("#text_tp_"+operationId).hide();
-        $("#table_tp_"+operationId).show();
-   }else if("json" == v){
-       $("#text_tp_"+operationId).show();
-       $("#table_tp_"+operationId).hide();
-   }
+
+//请求类型
+function changeParameterType(el){
+    var operationId = $(el).attr("operationId");
+    var type = $(el).attr("type");
+    $("#content_type_"+operationId).val(type);
+    $(el).addClass("layui-btn-normal").removeClass("layui-btn-primary");
+    $("#content_type_"+operationId).attr("contentType",$(el).attr("contentType"));
+	   if("form" == type){
+	        $("#text_tp_"+operationId).hide();
+	        $("#table_tp_"+operationId).show();
+	        $("#pt_json_"+operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
+	   }else if("json" == type){
+	       $("#text_tp_"+operationId).show();
+	       $("#table_tp_"+operationId).hide();
+	       $("#pt_form_"+operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
+	   }
 }
