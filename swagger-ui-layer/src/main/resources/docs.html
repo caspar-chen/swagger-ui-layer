@@ -38,7 +38,7 @@
                                     {{!--具体方法--}}
                                     {{props prop}}
                                         {{if prop.tags[0] == ~tag.name}}
-                                            <dd title="{{:~path.key}}">
+                                            <dd title="{{:key}} {{:prop.description}}">
                                                 <a href="javascript:;" name="a_path" path="{{:~path.key}}" method="{{:key}}" operationId="{{:prop.operationId}}"><i class="fa fa-navicon" data-icon="fa-navicon"></i><cite class="">{{:~path.key}}</cite><cite class="{{:key}}_font pl10">{{:prop.summary}}</cite></a>
                                             </dd>
                                         {{/if}}
@@ -151,9 +151,9 @@
                 </fieldset>
                 <div class="method-type">
                     <lable>Parameter Type : </lable>
-                    <input type="hidden" id="content_type_{{:operationId}}" contentType="application/x-www-form-urlencoded;charset=UTF-8">
-                    <button id="pt_form_{{:operationId}}" type="form" operationId = "{{:operationId}}" onclick="changeParameterType(this)" contentType="application/x-www-form-urlencoded;charset=UTF-8" class="layui-btn layui-btn-small layui-btn-normal layui-btn-radius">Form</button>
-                    <button id="pt_json_{{:operationId}}" type="json" operationId = "{{:operationId}}" onclick="changeParameterType(this)" contentType="application/json;charset=UTF-8" class="layui-btn layui-btn-small layui-btn-primary layui-btn-radius">Json</button>
+                    <input type="hidden" id="content_type_{{:operationId}}" value="form">
+                    <button id="pt_form_{{:operationId}}" type="form" operationId = "{{:operationId}}" onclick="changeParameterType(this)" class="layui-btn layui-btn-small layui-btn-normal layui-btn-radius">Form</button>
+                    <button id="pt_json_{{:operationId}}" type="json" operationId = "{{:operationId}}" onclick="changeParameterType(this)" class="layui-btn layui-btn-small layui-btn-primary layui-btn-radius">Json</button>
                 </div>
                 <textarea class="parameter-text hide" rows="10" id="text_tp_{{:operationId}}"></textarea>
                 <table class="layui-table"  id="table_tp_{{:operationId}}">

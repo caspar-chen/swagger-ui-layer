@@ -86,7 +86,6 @@ function getData(operationId){
    
    //请求方式
    var parameterType = $("#content_type_"+operationId).val();
-   var contentType = $("#content_type_"+operationId).attr("contentType");
    
    //query 参数
    var parameterJson = {};
@@ -114,7 +113,6 @@ function getData(operationId){
 	   url: path,
 	   data: parameterJson,
 	   dataType: 'json',
-	   contentType: contentType,
 	   success: function(data){
 	     var options = {
           withQuotes: true
@@ -131,14 +129,13 @@ function changeParameterType(el){
     var type = $(el).attr("type");
     $("#content_type_"+operationId).val(type);
     $(el).addClass("layui-btn-normal").removeClass("layui-btn-primary");
-    $("#content_type_"+operationId).attr("contentType",$(el).attr("contentType"));
-	   if("form" == type){
-	        $("#text_tp_"+operationId).hide();
-	        $("#table_tp_"+operationId).show();
-	        $("#pt_json_"+operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
-	   }else if("json" == type){
-	       $("#text_tp_"+operationId).show();
-	       $("#table_tp_"+operationId).hide();
-	       $("#pt_form_"+operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
-	   }
+    if("form" == type){
+        $("#text_tp_"+operationId).hide();
+        $("#table_tp_"+operationId).show();
+        $("#pt_json_"+operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
+    }else if("json" == type){
+       $("#text_tp_"+operationId).show();
+       $("#table_tp_"+operationId).hide();
+       $("#pt_form_"+operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
+    }
 }
