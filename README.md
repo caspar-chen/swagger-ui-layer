@@ -8,6 +8,9 @@ swagger-ui-layer 要依赖swagger的注解功能，因为swagger-ui-layer 仅仅
 
 
 ### 效果
+
+* 最终生成文档的展示例子：http://suldemo.tianox.com/docs.html
+
 * 接口文档信息界面
 
 ![api-info](swagger-ui-layer/src/main/resources/examples/api-info.png)
