@@ -83,6 +83,16 @@ function getData(operationId){
            path = path.replace("{"+k+"}",v);
        }
    });
+	
+   //header参数
+   var headerJson = {};
+   $("[p_operationId='"+operationId+"'][in='header']").each(function(index, domEle){
+	var k = $(domEle).attr("name");
+	var v = $(domEle).val();
+	if(v){
+	   headerJson[k] = v;
+	}
+   });
    
    //请求方式
    var parameterType = $("#content_type_"+operationId).val();
@@ -111,6 +121,7 @@ function getData(operationId){
    $.ajax({
 	   type: $("[m_operationId='"+operationId+"']").attr("method"),
 	   url: path,
+	   headers: headerJson,
 	   data: parameterJson,
 	   dataType: 'json',
 	   success: function(data){
