@@ -1,1 +1,20 @@
-/target/
+*.iml
+.classpath
+.metadata
+.settings
+**/.idea/
+**/build/
+**/bin/
+**/debug/
+**/target/
+
+# OS or Editor folders
+.DS_Store
+._*
+Thumbs.db
+.cache
+.tmproj
+*.esproj
+nbproject
+*.sublime-project
+*.sublime-workspace
