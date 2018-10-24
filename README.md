@@ -89,3 +89,7 @@ ResponseHeader
 
 ### License
 Apache License 2.0
+
+### 源码维护地址
+* Github ： https://github.com/caspar-chen/swagger-ui-layer
+* 码云 ：https://gitee.com/caspar-chen/Swagger-UI-layer
