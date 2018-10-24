@@ -143,24 +143,22 @@ function getData(operationId) {
         }
     }
 
+    //是否有formData类型数据
+    var hasFormData = $("[p_operationId='" + operationId + "'][in='formData']").length >=1;
+
     //发送请求
-    $.ajax({
-        type: $("[m_operationId='" + operationId + "']").attr("method"),
-        url: path,
-        headers: headerJson,
-        data: parameterJson,
-        dataType: 'json',
-        success: function (data) {
-            var options = {
-                withQuotes: true
-            };
-            $("#json-response").jsonViewer(data, options);
-        }
-    });
+    if(hasFormData){
+        var formData = new FormData($("#form_"+ operationId)[0]);
+        send(path,operationId,headerJson,formData);
+    }else {
+        send(path,operationId,headerJson,parameterJson);
+    }
 }
 
 
-//请求类型
+/**
+ * 请求类型
+ */
 function changeParameterType(el) {
     var operationId = $(el).attr("operationId");
     var type = $(el).attr("type");
@@ -175,4 +173,30 @@ function changeParameterType(el) {
         $("#table_tp_" + operationId).hide();
         $("#pt_form_" + operationId).addClass("layui-btn-primary").removeClass("layui-btn-normal");
     }
+}
+
+/**
+ * 发送请求
+ * @param url 地址
+ * @param operationId   operationId
+ * @param header    header参数
+ * @param data  data数据
+ */
+function send(url,operationId,header,data){
+    $.ajax({
+        type: $("[m_operationId='" + operationId + "']").attr("method"),
+        url: path,
+        headers: header,
+        data: data,
+        dataType: 'json',
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            var options = {
+                withQuotes: true
+            };
+            $("#json-response").jsonViewer(data, options);
+        }
+    });
 }

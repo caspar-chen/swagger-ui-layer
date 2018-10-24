@@ -172,6 +172,7 @@
                     </button>
                 </div>
                 <textarea class="parameter-text hide" rows="10" id="text_tp_{{:operationId}}"></textarea>
+                <form id="form_{{:operationId}}">
                 <table class="layui-table" id="table_tp_{{:operationId}}">
                     <colgroup>
                         <col width="150">
@@ -197,12 +198,22 @@
                         <td>{{:name}}</td>
                         <td>
                             {{if required}}
-                            <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
-                                   required="required" value="{{:default}}" placeholder="required" autocomplete="off"
-                                   class="layui-input">
+                                {{if type == 'file'}}
+                                    <input type="file" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                   required="required" value="{{:default}}" placeholder="required">
+                                {{else}}
+                                    <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                           required="required" value="{{:default}}" placeholder="required" autocomplete="off"
+                                           class="layui-input">
+                                {{/if}}
                             {{else}}
-                            <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
-                                   autocomplete="off" value="{{:default}}" class="layui-input">
+                                {{if type == 'file'}}
+                                    <input type="file" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                           value="{{:default}}">
+                                {{else}}
+                                    <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                           autocomplete="off" value="{{:default}}" class="layui-input">
+                                {{/if}}
                             {{/if}}
                         </td>
                         <td>{{:description}}</td>
@@ -217,6 +228,7 @@
                     {{/for}}
                     </tbody>
                 </table>
+                </form>
                 <div>
                     <button class="layui-btn" name="btn_submit" onclick="getData('{{:operationId}}')"> Submit</button>
                 </div>
