@@ -101,7 +101,7 @@
                     </tr>
                     <tr>
                         <th>Consumes</th>
-                        <td>{{:consumes}}</td>
+                        <td id="consumes_{{:operationId}}">{{:consumes}}</td>
                         <th>Produces</th>
                         <td>{{:produces}}</td>
                     </tr>
@@ -136,6 +136,17 @@
                         {{/if}}
                     </tr>
                     {{/for}}
+                    </tbody>
+                </table>
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>Properties</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody id="path-body-request-model">
                     </tbody>
                 </table>
                 <fieldset class="layui-elem-field layui-field-title">
@@ -173,61 +184,62 @@
                 </div>
                 <textarea class="parameter-text hide" rows="10" id="text_tp_{{:operationId}}"></textarea>
                 <form id="form_{{:operationId}}">
-                <table class="layui-table" id="table_tp_{{:operationId}}">
-                    <colgroup>
-                        <col width="150">
-                        <col>
-                        <col>
-                        <col width="150">
-                        <col width="150">
-                        <col>
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Value</th>
-                        <th>Description</th>
-                        <th>Parameter Type</th>
-                        <th>Data Type</th>
-                        <th>Required</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{for parameters}}
-                    <tr>
-                        <td>{{:name}}</td>
-                        <td>
+                    <table class="layui-table" id="table_tp_{{:operationId}}">
+                        <colgroup>
+                            <col width="150">
+                            <col>
+                            <col>
+                            <col width="150">
+                            <col width="150">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                            <th>Parameter Type</th>
+                            <th>Data Type</th>
+                            <th>Required</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{for parameters}}
+                        <tr>
+                            <td>{{:name}}</td>
+                            <td>
+                                {{if required}}
+                                {{if type == 'file'}}
+                                <input type="file" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                       required="required" value="{{:default}}" placeholder="required">
+                                {{else}}
+                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                       required="required" value="{{:default}}" placeholder="required"
+                                       autocomplete="off"
+                                       class="layui-input">
+                                {{/if}}
+                                {{else}}
+                                {{if type == 'file'}}
+                                <input type="file" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                       value="{{:default}}">
+                                {{else}}
+                                <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
+                                       autocomplete="off" value="{{:default}}" class="layui-input">
+                                {{/if}}
+                                {{/if}}
+                            </td>
+                            <td>{{:description}}</td>
+                            <td>{{:in}}</td>
+                            <td>{{:type}}</td>
                             {{if required}}
-                                {{if type == 'file'}}
-                                    <input type="file" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
-                                   required="required" value="{{:default}}" placeholder="required">
-                                {{else}}
-                                    <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
-                                           required="required" value="{{:default}}" placeholder="required" autocomplete="off"
-                                           class="layui-input">
-                                {{/if}}
+                            <td><i class="layui-icon">&#xe618;</i></td>
                             {{else}}
-                                {{if type == 'file'}}
-                                    <input type="file" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
-                                           value="{{:default}}">
-                                {{else}}
-                                    <input type="text" p_operationId="{{:~root.operationId}}" name="{{:name}}" in="{{:in}}"
-                                           autocomplete="off" value="{{:default}}" class="layui-input">
-                                {{/if}}
+                            <td></td>
                             {{/if}}
-                        </td>
-                        <td>{{:description}}</td>
-                        <td>{{:in}}</td>
-                        <td>{{:type}}</td>
-                        {{if required}}
-                        <td><i class="layui-icon">&#xe618;</i></td>
-                        {{else}}
-                        <td></td>
-                        {{/if}}
-                    </tr>
-                    {{/for}}
-                    </tbody>
-                </table>
+                        </tr>
+                        {{/for}}
+                        </tbody>
+                    </table>
                 </form>
                 <div>
                     <button class="layui-btn" name="btn_submit" onclick="getData('{{:operationId}}')"> Submit</button>
@@ -242,9 +254,10 @@
         </div>
     </div>
 </script>
-<script id="temp_body_response_model" type="text/template">
-    <tr class="response_entity">
-        <td colspan="3">{{:name}} : </td>
+
+<script id="temp_body_ref_model" type="text/template">
+    <tr class="ref_entity">
+        <td colspan="3" id="ref-{{:domId}}-{{:name}}">{{:name}} :</td>
     </tr>
     {{props properties}}
     <tr>

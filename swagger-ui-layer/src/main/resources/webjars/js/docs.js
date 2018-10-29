@@ -4,7 +4,7 @@ $.views.converters("getResponseModelName", function (val) {
 });
 
 var tempBody = $.templates('#temp_body');
-var tempBodyResponseModel = $.templates('#temp_body_response_model');
+var tempBodyRefModel = $.templates('#temp_body_ref_model');
 
 //获取context path
 var contextPath = getContextPath();
@@ -42,8 +42,15 @@ $(function () {
                         d.path = path;
                         d.method = method;
                         $("#path-body").html(tempBody.render(d));
-                        var modelName = getResponseModelName(d.responses["200"]["schema"]["$ref"]);
-                        renderResponseModel(jsonData, modelName);
+                        var modelName = getRefName(d.responses["200"]["schema"]["$ref"]);
+
+                        $.each(d.parameters, function (i, p) {
+                            if (p["schema"]) {
+                                var parameterModelName = getRefName(p["schema"]["$ref"]);
+                                renderRefModel("path-body-request-model", jsonData, parameterModelName);
+                            }
+                        })
+                        renderRefModel("path-body-response-model", jsonData, modelName);
                     }
                 });
             });
@@ -63,35 +70,52 @@ $(function () {
 
 });
 
-//渲染返回参数
-function renderResponseModel(jsonData, modelName) {
+
+/**
+ * 渲染ref类型参数
+ * @param domId 需要添加的domId
+ * @param jsonData
+ * @param modelName
+ */
+function renderRefModel(domId, jsonData, modelName) {
     if (modelName) {
         var model = jsonData.definitions[modelName];
         model.name = modelName;
+        model.domId = domId;
         //修改有嵌套对象的type
         $.each(model.properties, function (i, v) {
             if (v.items) {
                 $.each(v.items, function (j, item) {
-                    model.properties[i].type = v.type + "[" + getResponseModelName(item) + "]"
+                    var typeModel = item.startsWith("#") ? getRefName(item) : item;
+                    model.properties[i].type = "Array[" + typeModel + "]";
                 });
+            }
+
+            //自定义对象类型（非Array）
+            if (!v.type) {
+                model.properties[i].type = getRefName(v["$ref"]);
             }
         });
 
-        $("#path-body-response-model").append(tempBodyResponseModel.render(model));
+        if ($("#ref-" + domId + "-" + modelName).length == 0) {
+            $("#" + domId).append(tempBodyRefModel.render(model));
+        }
 
         //递归渲染多层对象嵌套
         $.each(model.properties, function (i, v) {
             if (v.items) {
                 $.each(v.items, function (j, item) {
-                    renderResponseModel(jsonData, getResponseModelName(item));
+                    if (item.startsWith("#")) {
+                        renderRefModel(domId, jsonData, getRefName(item));
+                    }
                 });
             }
         });
     }
 }
 
-//获得返回模型名字
-function getResponseModelName(val) {
+//获得模型名字
+function getRefName(val) {
     if (!val) {
         return null;
     }
@@ -143,16 +167,8 @@ function getData(operationId) {
         }
     }
 
-    //是否有formData类型数据
-    var hasFormData = $("[p_operationId='" + operationId + "'][in='formData']").length >=1;
-
     //发送请求
-    if(hasFormData){
-        var formData = new FormData($("#form_"+ operationId)[0]);
-        send(path,operationId,headerJson,formData);
-    }else {
-        send(path,operationId,headerJson,parameterJson);
-    }
+    send(path, operationId, headerJson, parameterJson);
 }
 
 
@@ -182,16 +198,57 @@ function changeParameterType(el) {
  * @param header    header参数
  * @param data  data数据
  */
-function send(url,operationId,header,data){
+function send(url, operationId, header, data) {
+
+    var type = $("[m_operationId='" + operationId + "']").attr("method");
+
+    //是否有formData类型数据
+    var hasFormData = $("[p_operationId='" + operationId + "'][in='formData']").length >= 1;
+
+    //是否有body类型数据
+    var hasBody = $("[p_operationId='" + operationId + "'][in='body']").length >= 1;
+
+    //发送请求
+    if (hasFormData) {
+        var formData = new FormData($("#form_" + operationId)[0]);
+        //querystring ,将参数加在url后面
+        var newUrl = appendParameterToUrl(url, data);
+        $.ajax({
+            type: type,
+            url: newUrl,
+            headers: header,
+            data: formData,
+            dataType: 'json',
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                var options = {
+                    withQuotes: true
+                };
+                $("#json-response").jsonViewer(data, options);
+            }
+        });
+        return;
+    }
+
+    //requestBody 请求
+    if (hasBody) {
+        var dom = $("[p_operationId='" + operationId + "'][in='body']")[0];
+        //querystring ,将参数加在url后面
+        url = appendParameterToUrl(url, data);
+        data = $(dom).val();
+    }
+
+    var contentType = $("#consumes_" + operationId).text();
+
     $.ajax({
-        type: $("[m_operationId='" + operationId + "']").attr("method"),
-        url: path,
+        type: type,
+        url: url,
         headers: header,
         data: data,
         dataType: 'json',
-        cache: false,
-        processData: false,
-        contentType: false,
+        contentType: contentType,
         success: function (data) {
             var options = {
                 withQuotes: true
@@ -199,4 +256,23 @@ function send(url,operationId,header,data){
             $("#json-response").jsonViewer(data, options);
         }
     });
+
+}
+
+/**
+ * 给url拼装参数
+ * @param url
+ * @param parameter
+ */
+function appendParameterToUrl(url, parameter) {
+    $.each(parameter, function (k, v) {
+        if (url.indexOf("?") == -1) {
+            url += "?";
+        }
+        url += k;
+        url += "=";
+        url += v;
+        url += "&";
+    });
+    return url.substring(0, url.length - 1);
 }
