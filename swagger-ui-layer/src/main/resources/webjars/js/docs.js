@@ -232,14 +232,14 @@ function send(url, operationId, header, data) {
         return;
     }
 
+    //querystring ,将参数加在url后面
+    url = appendParameterToUrl(url, data);
+
     //requestBody 请求
     if (hasBody) {
         var dom = $("[p_operationId='" + operationId + "'][in='body']")[0];
-        //querystring ,将参数加在url后面
-        url = appendParameterToUrl(url, data);
         data = $(dom).val();
     }
-
     var contentType = $("#consumes_" + operationId).text();
 
     $.ajax({
@@ -265,6 +265,9 @@ function send(url, operationId, header, data) {
  * @param parameter
  */
 function appendParameterToUrl(url, parameter) {
+    if(!parameter){
+        return url;
+    }
     $.each(parameter, function (k, v) {
         if (url.indexOf("?") == -1) {
             url += "?";

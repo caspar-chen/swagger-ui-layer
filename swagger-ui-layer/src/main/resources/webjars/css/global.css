@@ -72,8 +72,19 @@
 .layui-side-scroll {width: 320px !important;}
 .layui-nav-tree {width: 300px !important;}
 .layui-layout-admin .layui-side {width: 300px !important;}
-.layui-body{left:300px}
+.layui-body{left:300px !important;}
 .layui-this a cite{color:#fff !important; }
+.layui-nav-tree .layui-nav-child, .layui-nav-tree .layui-nav-child a:hover {
+    background-color: #41444c !important;
+    color: #f2f2f2 !important;
+}
+.layui-nav-tree .layui-nav-child a {
+    height: 55px;
+    line-height: 25px;
+    color: #c2c2c2;
+    border-bottom: 1px solid;
+}
+
 /*继承layui - end*/
 
 
