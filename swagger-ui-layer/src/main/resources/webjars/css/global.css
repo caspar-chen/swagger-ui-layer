@@ -82,7 +82,7 @@
     height: 55px;
     line-height: 25px;
     color: #c2c2c2;
-    border-bottom: 1px solid;
+    border-bottom: 1px dashed ;
 }
 
 /*继承layui - end*/
