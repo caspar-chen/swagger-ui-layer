@@ -43,13 +43,15 @@ $(function () {
                         d.method = method;
                         $("#path-body").html(tempBody.render(d));
                         var modelName = getRefName(d.responses["200"]["schema"]["$ref"]);
-
-                        $.each(d.parameters, function (i, p) {
-                            if (p["schema"]) {
-                                var parameterModelName = getRefName(p["schema"]["$ref"]);
-                                renderRefModel("path-body-request-model", jsonData, parameterModelName);
-                            }
-                        })
+                        console.log();
+                        if(d.parameters){
+                            $.each(d.parameters, function (i, p) {
+                                if (p["schema"]) {
+                                    var parameterModelName = getRefName(p["schema"]["$ref"]);
+                                    renderRefModel("path-body-request-model", jsonData, parameterModelName);
+                                }
+                            });
+                        }
                         renderRefModel("path-body-response-model", jsonData, modelName);
                     }
                 });
@@ -265,7 +267,7 @@ function send(url, operationId, header, data) {
  * @param parameter
  */
 function appendParameterToUrl(url, parameter) {
-    if(!parameter){
+    if($.isEmptyObject(parameter)){
         return url;
     }
     $.each(parameter, function (k, v) {
