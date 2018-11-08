@@ -152,18 +152,8 @@
                 <fieldset class="layui-elem-field layui-field-title">
                     <legend>Responses</legend>
                 </fieldset>
-                <div>
-                    <table class="layui-table">
-                        <thead>
-                        <tr>
-                            <th>Properties</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                        </tr>
-                        </thead>
-                        <tbody id="path-body-response-model">
-                        </tbody>
-                    </table>
+                <div id="path-body-response-model">
+
                 </div>
             </div>
             <div class="layui-tab-item">
@@ -256,17 +246,33 @@
 </script>
 
 <script id="temp_body_ref_model" type="text/template">
-    <tr class="ref_entity">
-        <td colspan="3" id="ref-{{:domId}}-{{:name}}">{{:name}} :</td>
-    </tr>
-    {{props properties}}
-    <tr>
-        <td>{{:key}}</td>
-        <td>{{:prop.type}}</td>
-        <td>{{:prop.description}}</td>
-    </tr>
-    {{/props}}
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>Properties</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="ref_entity">
+            <td colspan="3" id="ref-{{:domId}}-{{:name}}">{{:name}} :</td>
+        </tr>
+        {{props properties}}
+        <tr>
+            <td>{{:key}}</td>
+            <td>{{:prop.type}}</td>
+            <td>{{:prop.description}}</td>
+        </tr>
+        {{/props}}
+        </tbody>
+    </table>
 </script>
+
+<script id="temp_body_type" type="text/template">
+    <blockquote class="layui-elem-quote layui-quote-nm">{{:type}}</blockquote>
+</script>
+
 </body>
 <script src="webjars/layui/layui.js"></script>
 <script src="webjars/js/jquery.js"></script>

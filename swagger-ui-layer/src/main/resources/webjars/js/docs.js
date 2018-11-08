@@ -5,6 +5,8 @@ $.views.converters("getResponseModelName", function (val) {
 
 var tempBody = $.templates('#temp_body');
 var tempBodyRefModel = $.templates('#temp_body_ref_model');
+var tempBodyType = $.templates('#temp_body_type');
+
 
 //获取context path
 var contextPath = getContextPath();
@@ -42,8 +44,23 @@ $(function () {
                         d.path = path;
                         d.method = method;
                         $("#path-body").html(tempBody.render(d));
+
+                        //如果没有返回值，直接跳过
+                        if(!d.responses["200"].hasOwnProperty("schema")){
+                            // continue
+                            return true;
+                        }
+
+                        //基本类型
+                        if(d.responses["200"]["schema"].hasOwnProperty("type")){
+                            var model = {"type":d.responses["200"]["schema"]["type"]};
+                            $("#path-body-response-model").append(tempBodyType.render(model));
+                            // continue
+                            return true;
+                        }
+
+                        //引用类型
                         var modelName = getRefName(d.responses["200"]["schema"]["$ref"]);
-                        console.log();
                         if(d.parameters){
                             $.each(d.parameters, function (i, p) {
                                 if (p["schema"]) {
@@ -235,7 +252,9 @@ function send(url, operationId, header, data) {
     }
 
     //querystring ,将参数加在url后面
-    url = appendParameterToUrl(url, data);
+    if(type != "get"){
+        url = appendParameterToUrl(url, data);
+    }
 
     //requestBody 请求
     if (hasBody) {
