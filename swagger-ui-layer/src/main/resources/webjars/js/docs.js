@@ -115,20 +115,28 @@ function renderRefModel(domId, jsonData, modelName) {
                 model.properties[i].type = getRefName(v["$ref"]);
             }
         });
-
+        //如果该对象没有被渲染到页面，则渲染
         if ($("#ref-" + domId + "-" + modelName).length == 0) {
             $("#" + domId).append(tempBodyRefModel.render(model));
         }
 
         //递归渲染多层对象嵌套
         $.each(model.properties, function (i, v) {
+            //Array
             if (v.items) {
                 $.each(v.items, function (j, item) {
+
                     if (item.startsWith("#")) {
                         renderRefModel(domId, jsonData, getRefName(item));
                     }
                 });
             }
+
+            //单个对象引用
+            if(v.hasOwnProperty("$ref")){
+                renderRefModel(domId, jsonData, getRefName(v["$ref"]));
+            }
+
         });
     }
 }
@@ -227,6 +235,8 @@ function send(url, operationId, header, data) {
     //是否有body类型数据
     var hasBody = $("[p_operationId='" + operationId + "'][in='body']").length >= 1;
 
+    var options = {withQuotes: true};
+
     //发送请求
     if (hasFormData) {
         var formData = new FormData($("#form_" + operationId)[0]);
@@ -242,10 +252,11 @@ function send(url, operationId, header, data) {
             processData: false,
             contentType: false,
             success: function (data) {
-                var options = {
-                    withQuotes: true
-                };
                 $("#json-response").jsonViewer(data, options);
+            },
+            error:function(e){
+                $("#json-response").html("");
+                layer.msg("" + JSON.stringify(e), {icon: 5});
             }
         });
         return;
@@ -271,10 +282,11 @@ function send(url, operationId, header, data) {
         dataType: 'json',
         contentType: contentType,
         success: function (data) {
-            var options = {
-                withQuotes: true
-            };
             $("#json-response").jsonViewer(data, options);
+        },
+        error:function(e){
+            $("#json-response").html("");
+            layer.msg("" + JSON.stringify(e), {icon: 5});
         }
     });
 

@@ -72,8 +72,9 @@
 <script id="temp_body" type="text/template">
     <div class="layui-tab layui-tab-brief">
         <ul class="layui-tab-title">
-            <li class="layui-this"><span class="method {{:method}}" m_operationId="{{:operationId}}" path="{{:path}}"
-                                         method="{{:method}}">{{:method}}</span>{{:path}}
+            <li class="layui-this">
+                <span class="method {{:method}}" m_operationId="{{:operationId}}" path="{{:path}}" method="{{:method}}">{{:method}}
+                </span>{{:path}}
             </li>
             <li>Debug</li>
         </ul>
@@ -138,17 +139,10 @@
                     {{/for}}
                     </tbody>
                 </table>
-                <table class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>Properties</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody id="path-body-request-model">
-                    </tbody>
-                </table>
+
+                <div id="path-body-request-model">
+
+                </div>
                 <fieldset class="layui-elem-field layui-field-title">
                     <legend>Responses</legend>
                 </fieldset>
@@ -247,7 +241,15 @@
 
 <script id="temp_body_ref_model" type="text/template">
     <table class="layui-table">
+        <colgroup>
+            <col width="150">
+            <col width="300">
+            <col>
+        </colgroup>
         <thead>
+        <tr class="ref_entity">
+            <td colspan="3" id="ref-{{:domId}}-{{:name}}">{{:name}} :</td>
+        </tr>
         <tr>
             <th>Properties</th>
             <th>Type</th>
@@ -255,9 +257,6 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="ref_entity">
-            <td colspan="3" id="ref-{{:domId}}-{{:name}}">{{:name}} :</td>
-        </tr>
         {{props properties}}
         <tr>
             <td>{{:key}}</td>
