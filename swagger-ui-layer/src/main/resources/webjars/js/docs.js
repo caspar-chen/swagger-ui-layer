@@ -240,11 +240,9 @@ function send(url, operationId, header, data) {
     //发送请求
     if (hasFormData) {
         var formData = new FormData($("#form_" + operationId)[0]);
-        //querystring ,将参数加在url后面
-        var newUrl = appendParameterToUrl(url, data);
         $.ajax({
             type: type,
-            url: newUrl,
+            url: url,
             headers: header,
             data: formData,
             dataType: 'json',
@@ -263,14 +261,13 @@ function send(url, operationId, header, data) {
     }
 
     //querystring ,将参数加在url后面
-    if(type != "get"){
-        url = appendParameterToUrl(url, data);
-    }
+    url = appendParameterToUrl(url,data);
 
     //requestBody 请求
+    var bodyData ;
     if (hasBody) {
         var dom = $("[p_operationId='" + operationId + "'][in='body']")[0];
-        data = $(dom).val();
+        bodyData = $(dom).val();
     }
     var contentType = $("#consumes_" + operationId).text();
 
@@ -278,7 +275,7 @@ function send(url, operationId, header, data) {
         type: type,
         url: url,
         headers: header,
-        data: data,
+        data: bodyData,
         dataType: 'json',
         contentType: contentType,
         success: function (data) {
