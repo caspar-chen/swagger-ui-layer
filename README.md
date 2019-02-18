@@ -92,8 +92,3 @@ Apache License 2.0
 
 ### 源码维护地址
 * Github ： https://github.com/caspar-chen/swagger-ui-layer
-* 码云 ：https://gitee.com/caspar-chen/Swagger-UI-layer
-
-### 微信讨论交流群
-![wechat_group](swagger-ui-layer/src/main/resources/examples/wechat_group.png)
-
